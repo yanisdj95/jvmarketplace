@@ -5,29 +5,45 @@ import styled from 'styled-components';
 
 const Jeux = props => {
     const [apiData, setApiData] = useState([])
-
+    let [page, setPage] = useState(0)
     useEffect(() => {
         const apiData = axios({
             method:'get',
-            url: "https://api.jikan.moe/v3/top/anime",
+            url: `https://api.jikan.moe/v3/top/anime/${page}`,
         }).then((response) => {
             setApiData(response.data.top)
         }).catch(err => {
             console.log(err)
         })
-      }, [])
+      }, [page])
       console.log(apiData)
+
+      const handleFavorite = (anime) => {
+          const currentFavorites = localStorage.getItem('favorites')
+          ? JSON.parse(localStorage.getItem('favorites'))
+          : []
+          currentFavorites.push(anime)
+          localStorage.setItem('favorites', JSON.stringify(currentFavorites))
+      }
     return (
+        <><ButtonDiv>
+            <ButtonStyle onClick={() => setPage(page - 1)}>-</ButtonStyle>
+            <ButtonStyle onClick={() => setPage(page + 1)}>+</ButtonStyle>     
+        </ButtonDiv>
         <ContainerDiv>
-            {apiData.map(anime => 
-                <AnimeDiv>
-                        <TitreDive>
-                            <p>{anime.title}</p>
-                        </TitreDive>
-                        <img src={anime.image_url}/>
+                {apiData.map(anime => <AnimeDiv>
+                    <TitreDive>
+                        <StyledTitre>{anime.title}</StyledTitre>
+                    </TitreDive>
+                    <StyledImg src={anime.image_url}/>
+                    <button onClick={() => handleFavorite({title : anime.title, image : anime.image_url})}>ADD</button>
                 </AnimeDiv>
-            )}
+                )}
         </ContainerDiv>
+        <ButtonDiv>
+            <ButtonStyle onClick={() => setPage(page - 1)}>-</ButtonStyle>
+            <ButtonStyle onClick={() => setPage(page + 1)}>+</ButtonStyle>     
+        </ButtonDiv></>
     );
 };
 const ContainerDiv = styled.div`
@@ -35,16 +51,45 @@ const ContainerDiv = styled.div`
     flex-wrap: wrap;
 `
 const AnimeDiv = styled.div`
-    background-color: red;
-    height:600px;
-    width:300px;
     margin:30px;
+    align-items: center;
+    display:flex;
+    flex-direction: column;
+    border:solid;
 `
 const TitreDive = styled.div`
     height:100px;
     width:100px;
-    background-color: aliceblue;
+`
+const StyledTitre = styled.p`
+    font-size: 1rem;
+    text-align: center;
+    font-weight: bold;
+`
+const StyledImg = styled.img`
+    height:300px;
+    width:200px;
+`
+const ButtonDiv = styled.div`
+    display:flex;
+    justify-content: center;
 `
 
+const ButtonStyle = styled.button`
+background-color: #fca311;
+border-radius: 10px;
+border: 4px solid #14213d;
+color: #ffffff;
+text-align: center;
+font-size: 28px;
+padding: 20px;
+width: 200px;
+-webkit-transition: all 0.5s;
+-moz-transition: all 0.5s;
+-o-transition: all 0.5s;
+transition: all 0.5s;
+cursor: pointer;
+margin: 5px;
+`
 
 export default Jeux;
