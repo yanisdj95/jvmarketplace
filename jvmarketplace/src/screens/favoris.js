@@ -8,11 +8,12 @@ const Favoris = props => {
     }, [])
     return (
         <ContainerDiv>
-                {fav.map(anime => <AnimeDiv>
+                {fav.map(anime =>
+                    <AnimeDiv>
                     <TitreDive>
                         <StyledTitre>{anime.title}</StyledTitre>
                     </TitreDive>
-                    <StyledImg src={anime.image_url}/>
+                    <StyledImg src={anime.image}/>
                     <button>REMOVE</button>
                 </AnimeDiv>
                 )}

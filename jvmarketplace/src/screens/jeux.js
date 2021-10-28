@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios'
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import Favoris from './favoris';
 
 const Jeux = props => {
     const [apiData, setApiData] = useState([])
@@ -16,13 +17,27 @@ const Jeux = props => {
             console.log(err)
         })
       }, [page])
-      console.log(apiData)
 
-      const handleFavorite = (anime) => {
-          const currentFavorites = localStorage.getItem('favorites')
-          ? JSON.parse(localStorage.getItem('favorites'))
-          : []
-          currentFavorites.push(anime)
+    const handleFavorite = (animefavorites) => {
+        const currentFavorites = localStorage.getItem('favorites')
+        ? JSON.parse(localStorage.getItem('favorites'))
+        : []
+
+        console.log(animefavorites)
+        console.log(currentFavorites)
+          const isPresent = currentFavorites.map(e => e.id).indexOf(animefavorites.id)
+          console.log(isPresent)
+          if(isPresent === -1){
+            currentFavorites.push(animefavorites)
+            localStorage.setItem('favorites', JSON.stringify(currentFavorites))
+          } else {
+            const filteredAnimes = currentFavorites.filter(
+                anime => anime.id !== animefavorites.id
+            )
+            console.log(filteredAnimes)
+            localStorage.setItem('favorites', JSON.stringify(filteredAnimes))
+          }
+          
           localStorage.setItem('favorites', JSON.stringify(currentFavorites))
       }
     return (
@@ -36,7 +51,7 @@ const Jeux = props => {
                         <StyledTitre>{anime.title}</StyledTitre>
                     </TitreDive>
                     <StyledImg src={anime.image_url}/>
-                    <button onClick={() => handleFavorite({title : anime.title, image : anime.image_url})}>ADD</button>
+                    <button onClick={() => handleFavorite({title : anime.title, image : anime.image_url, id : anime.mal_id})}>ADD</button>
                 </AnimeDiv>
                 )}
         </ContainerDiv>
